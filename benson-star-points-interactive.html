@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benson AI - Star Points System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .device-frame {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            background: linear-gradient(180deg, #1a4d7a 0%, #0d2847 100%);
+            border-radius: 50px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .time {
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px 20px 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .greeting-text {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .star-badge-header {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 193, 7, 0.15) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 50px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+
+        .star-badge-header:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 193, 7, 0.25) 100%);
+            border-color: rgba(255, 215, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        .star-icon-small {
+            font-size: 20px;
+        }
+
+        .star-count-header {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .profile-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .profile-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .stars-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px 20px;
+        }
+
+        .back-button {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .screen-content {
+            height: calc(844px - 140px);
+            overflow-y: auto;
+            padding: 0 16px 24px;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            width: 0;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .podcast-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+        }
+
+        .podcast-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
+            border-radius: 14px;
+            flex-shrink: 0;
+        }
+
+        .podcast-info {
+            flex: 1;
+        }
+
+        .podcast-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .podcast-subtitle {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .listen-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .account-card {
+            text-align: center;
+            padding: 18px;
+        }
+
+        .account-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .account-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .cash-balance {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .milestone-section {
+            margin-top: 16px;
+        }
+
+        .milestone-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 10px;
+        }
+
+        .milestone-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .view-more {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a78bfa 0%, #ec4899 100%);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .milestone-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .scheduled-orders-card {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            text-align: center;
+            padding: 24px 18px;
+        }
+
+        .scheduled-label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 6px;
+        }
+
+        .scheduled-today {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .orders-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .auto-invest-card {
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            padding: 16px;
+        }
+
+        .auto-invest-title {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 12px;
+        }
+
+        .stock-logos {
+            display: flex;
+            justify-content: center;
+            gap: -12px;
+            margin-bottom: 12px;
+        }
+
+        .stock-logo {
+            width: 42px;
+            height: 42px;
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid #1a4d7a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #000;
+        }
+
+        .stock-logo:not(:first-child) {
+            margin-left: -10px;
+        }
+
+        .stock-logo:last-child {
+            background: #1e3a8a;
+            color: #fff;
+        }
+
+        .invest-details {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .streak {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Community Goals Card */
+        .community-goals-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .community-goals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .community-goals-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .live-indicator {
+            font-size: 10px;
+            color: #10b981;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .community-goal-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .community-goal-item:last-of-type {
+            margin-bottom: 12px;
+        }
+
+        .goal-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .goal-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .goal-reward {
+            font-size: 11px;
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        .goal-progress-section {
+            width: 100%;
+        }
+
+        .goal-counter {
+            font-size: 14px;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .view-all-community-btn {
+            width: 100%;
+            background: rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            padding: 10px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-all-community-btn:hover {
+            background: rgba(139, 92, 246, 0.4);
+        }
+
+        /* Simulation Button */
+        .simulation-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .simulation-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .toast-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .toast-message {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .toast-stars {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffd700;
+        }
+
+        /* Simulation Modal */
+        .simulation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .simulation-modal.show {
+            display: flex;
+        }
+
+        .simulation-content {
+            background: linear-gradient(135deg, #1a4d7a 0%, #0d2847 100%);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 350px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .simulation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .simulation-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .close-modal-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .simulation-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .simulation-option {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .simulation-option:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #10b981;
+        }
+
+        .simulation-option-info {
+            flex: 1;
+        }
+
+        .simulation-option-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .simulation-option-desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .simulation-option-stars {
+            font-size: 16px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        /* Star Points Card */
+        .star-points-card {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            padding: 18px;
+            cursor: auto;
+        }
+
+        .star-points-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .power-ups-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .earn-points-link {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .earn-points-link:hover {
+            opacity: 0.8;
+        }
+
+        .power-ups-preview {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .power-ups-preview::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .power-ups-preview::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .power-ups-preview::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .power-up-mini {
+            min-width: 110px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .power-up-mini:hover {
+            transform: translateY(-2px);
+        }
+
+        .power-up-emoji {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .power-up-name {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .power-up-cost {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.2s;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: #fff;
+        }
+
+        .nav-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .nav-item.center {
+            transform: translateY(-16px);
+            flex: 0;
+        }
+
+        .nav-item.center .nav-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 50%;
+            border: 4px solid rgba(13, 40, 71, 0.8);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .nav-item.left {
+            align-items: flex-start;
+            padding-left: 20px;
+        }
+
+        .nav-item.right {
+            align-items: flex-end;
+            padding-right: 20px;
+        }
+
+        /* Stars Page Styles */
+        .page-header {
+            text-align: center;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(236, 72, 153, 0.3) 100%);
+            border-radius: 24px;
+            margin-bottom: 24px;
+        }
+
+        .star-balance-large {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .star-icon-xl {
+            font-size: 56px;
+        }
+
+        .star-number {
+            font-size: 64px;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .star-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 0 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Power-Ups Grid */
+        .power-ups-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .power-up-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .power-up-card.locked {
+            opacity: 0.6;
+        }
+
+        .power-up-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .power-up-title-section {
+            flex: 1;
+        }
+
+        .power-up-title-text {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .power-up-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.4;
+        }
+
+        .power-up-price {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffd700;
+            white-space: nowrap;
+        }
+
+        .social-proof {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 12px 0;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .redeem-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .redeem-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .redeem-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .locked-progress {
+            margin: 12px 0;
+        }
+
+        .locked-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .scarcity {
+            font-size: 11px;
+            color: #fbbf24;
+            margin-top: 8px;
+        }
+
+        /* Earn Stars Section */
+        .earn-category {
+            margin-bottom: 24px;
+        }
+
+        .category-header {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .category-title {
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            transition: transform 0.2s;
+        }
+
+        .category-header.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+
+        .earn-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .earn-list.collapsed {
+            display: none;
+        }
+
+        .earn-item {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .earn-item.completed {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .earn-item.milestone {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .earn-item.community {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .earn-item-info {
+            flex: 1;
+        }
+
+        .earn-item-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .earn-item-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+        }
+
+        .earn-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-milestone {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+
+        .badge-repeatable {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .badge-one-time {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .earn-reward {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .earn-stars {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .completed-check {
+            width: 28px;
+            height: 28px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .progress-info {
+            margin-top: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .completion-info {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(16, 185, 129, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .completion-date {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .completion-stars {
+            font-size: 12px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .live-counter {
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .counter-value {
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .countdown {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #fbbf24;
+        }
+
+        /* Buy Stars Section */
+        .buy-header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .unlock-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #10b981;
+            margin-top: 8px;
+        }
+
+        .packages-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .package-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: border-color 0.2s;
+        }
+
+        .package-card:hover {
+            border-color: #ffd700;
+        }
+
+        .package-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .package-name {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .package-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #10b981;
+        }
+
+        .package-stars-display {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        .package-stars-number {
+            font-size: 42px;
+            font-weight: 800;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ffd700 0%, #f59e0b 100%);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            color: #000;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .buy-policy {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+        }
+
+        .policy-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .policy-list {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.8;
+        }
+
+        /* History Section */
+        .history-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .history-timeline {
+            display: grid;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px;
+            border-left: 4px solid transparent;
+        }
+
+        .history-item.earned {
+            border-left-color: #10b981;
+        }
+
+        .history-item.redeemed {
+            border-left-color: #ef4444;
+        }
+
+        .history-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .history-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .history-amount {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .history-amount.positive {
+            color: #10b981;
+        }
+
+        .history-amount.negative {
+            color: #ef4444;
+        }
+
+        .history-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+        }
+
+        .history-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="time">12:39</div>
+            <div class="status-icons">
+                <span>📶</span>
+                <span>📡</span>
+                <span style="background: white; color: black; padding: 2px 6px; border-radius: 4px; font-size: 12px;">77</span>
+            </div>
+        </div>
+
+        <!-- HOME SCREEN -->
+        <div id="home-screen" class="screen-content">
+            <!-- App Header -->
+            <div class="app-header">
+                <div class="header-left">
+                    <button class="profile-btn" onclick="showStarsPage()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </button>
+                    <div class="greeting-text">Good morning, <span style="font-weight: 700;">Phillip</span></div>
+                </div>
+                <button class="star-badge-header" onclick="showStarsPage()">
+                    <span class="star-icon-small">⭐</span>
+                    <span class="star-count-header">2,450</span>
+                </button>
+            </div>
+
+            <!-- Daily Podcast Card -->
+            <div class="card podcast-card">
+                <div class="podcast-icon"></div>
+                <div class="podcast-info">
+                    <div class="podcast-title">Daily Podcast</div>
+                    <div class="podcast-subtitle">Tuesday's update</div>
+                </div>
+                <button class="listen-btn">
+                    <span>Listen</span>
+                    <span>▶</span>
+                </button>
+            </div>
+
+            <!-- Account Value Card -->
+            <div class="card account-card">
+                <div class="account-label">ACCOUNT VALUE</div>
+                <div class="account-value">$68,384<span style="font-size: 36px;">,91</span></div>
+                <div class="cash-balance">CASH BALANCE: $65,990,61</div>
+                
+                <div class="milestone-section">
+                    <div class="milestone-header">
+                        <span class="milestone-label">INVESTMENT MILESTONE</span>
+                        <a href="#" class="view-more">View more</a>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 99%;"></div>
+                    </div>
+                    <div class="milestone-details">
+                        <span>99%</span>
+                        <span>$2,400</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduled Orders Card -->
+            <div class="card scheduled-orders-card">
+                <div class="scheduled-label">SCHEDULED ORDERS FOR</div>
+                <div class="scheduled-today">Today</div>
+                <div class="orders-badge">
+                    <span>●</span>
+                    <span>2 ORDERS</span>
+                </div>
+            </div>
+
+            <!-- Auto-Invest Card -->
+            <div class="card auto-invest-card">
+                <div class="auto-invest-title">LATEST AUTO-INVEST</div>
+                <div class="stock-logos">
+                    <div class="stock-logo">b</div>
+                    <div class="stock-logo" style="background: #e11d48; color: white;">C</div>
+                    <div class="stock-logo" style="background: #3b82f6; color: white;">P</div>
+                    <div class="stock-logo">n</div>
+                </div>
+                <div class="invest-details">
+                    <span>2 JAN</span>
+                    <div class="streak">
+                        <span>STREAK 31</span>
+                        <span>🔥</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Goals Card -->
+            <div class="card community-goals-card">
+                <div class="community-goals-header">
+                    <div class="community-goals-title">🌍 Community Goals</div>
+                    <span class="live-indicator">● LIVE</span>
+                </div>
+                
+                <div class="community-goal-item">
+                    <div class="goal-info">
+                        <div class="goal-name">Daily Podcast Listeners</div>
+                        <div class="goal-reward">+50 ⭐ for everyone</div>
+                    </div>
+                    <div class="goal-progress-section">
+                        <div class="goal-counter" id="home-podcast-counter">847 / 1,000</div>
+                        <div class="progress-bar" style="margin-top: 6px;">
+                            <div class="progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="community-goal-item">
+                    <div class="goal-info">
+                        <div class="goal-name">Weekly Investments</div>
+                        <div class="goal-reward">+100 ⭐ for everyone</div>
+                    </div>
+                    <div class="goal-progress-section">
+                        <div class="goal-counter" id="home-investment-counter">$67,234 / $100,000</div>
+                        <div class="progress-bar" style="margin-top: 6px;">
+                            <div class="progress-fill" style="width: 67%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="view-all-community-btn" onclick="showStarsPage(); switchStarsTab('earn')">View All Community Goals</button>
+            </div>
+
+            <!-- Simulation Button -->
+            <button class="simulation-btn" onclick="showSimulation()">
+                <span>🎮</span>
+                <span>Simulate Earning</span>
+            </button>
+
+            <!-- Power-ups Card -->
+            <div class="card star-points-card">
+                <div class="star-points-header">
+                    <div class="power-ups-title">Power-ups</div>
+                    <a class="earn-points-link" onclick="showStarsPage(); switchStarsTab('earn')">Earn points</a>
+                </div>
+                
+                <div class="power-ups-preview">
+                    <div class="power-up-mini" onclick="showStarsPage()">
+                        <div class="power-up-emoji">📈</div>
+                        <div class="power-up-name">Buy the Dip</div>
+                        <div class="power-up-cost">500 ⭐</div>
+                    </div>
+                    <div class="power-up-mini" onclick="showStarsPage()">
+                        <div class="power-up-emoji">💰</div>
+                        <div class="power-up-name">$5 Bonus</div>
+                        <div class="power-up-cost">1,500 ⭐</div>
+                    </div>
+                    <div class="power-up-mini" onclick="showStarsPage()">
+                        <div class="power-up-emoji">🎯</div>
+                        <div class="power-up-name">Portfolio Report</div>
+                        <div class="power-up-cost">750 ⭐</div>
+                    </div>
+                    <div class="power-up-mini" onclick="showStarsPage()">
+                        <div class="power-up-emoji">🧹</div>
+                        <div class="power-up-name">Portfolio Cleanup</div>
+                        <div class="power-up-cost">2,000 ⭐</div>
+                    </div>
+                    <div class="power-up-mini" onclick="showStarsPage()">
+                        <div class="power-up-emoji">📊</div>
+                        <div class="power-up-name">Sector Report</div>
+                        <div class="power-up-cost">3,500 ⭐</div>
+                    </div>
+                    <div class="power-up-mini" onclick="showStarsPage()">
+                        <div class="power-up-emoji">👔</div>
+                        <div class="power-up-name">CEO Club</div>
+                        <div class="power-up-cost">4,500 ⭐</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STARS PAGE -->
+        <div id="stars-screen" class="screen-content hidden">
+            <!-- Stars Header with Back Button -->
+            <div class="stars-page-header">
+                <button class="back-button" onclick="showHome()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                </button>
+                <div class="greeting-section">
+                    <div class="greeting-text">Star Points</div>
+                </div>
+                <div style="width: 48px;"></div>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="star-balance-large">
+                    <div class="star-icon-xl">⭐</div>
+                    <div class="star-number">2,450</div>
+                </div>
+                <div class="star-subtitle">Star Points available</div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchStarsTab('powerups')">Power-Ups</button>
+                <button class="tab" onclick="switchStarsTab('earn')">Earn</button>
+                <button class="tab" onclick="switchStarsTab('buy')">Buy</button>
+                <button class="tab" onclick="switchStarsTab('history')">History</button>
+            </div>
+
+            <!-- Power-Ups Tab -->
+            <div id="powerups-tab" class="tab-content active">
+                <div class="power-ups-grid">
+                    <!-- Buy the Dip -->
+                    <div class="power-up-card">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>📈</span>
+                                    <span>Buy the Dip</span>
+                                </div>
+                                <div class="power-up-description">Auto-invest $2 extra when your stocks drop 5%+</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>500</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>1,247 users activated this week</span>
+                        </div>
+                        <button class="redeem-btn">Redeem Now</button>
+                    </div>
+
+                    <!-- Portfolio Cleanup -->
+                    <div class="power-up-card">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>🧹</span>
+                                    <span>Portfolio Cleanup</span>
+                                </div>
+                                <div class="power-up-description">One-time professional portfolio optimization</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>2,000</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>892 users redeemed this month</span>
+                        </div>
+                        <button class="redeem-btn">Redeem Now</button>
+                    </div>
+
+                    <!-- Sector AI Report - LOCKED -->
+                    <div class="power-up-card locked">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>📊</span>
+                                    <span>Sector AI Report</span>
+                                </div>
+                                <div class="power-up-description">Full AI analysis of any market sector</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>3,500</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>534 users redeemed this month</span>
+                        </div>
+                        <div class="locked-progress">
+                            <div class="locked-text">Need 1,050 more stars</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%;"></div>
+                            </div>
+                            <div class="scarcity">🔥 Popular choice - Limited availability</div>
+                        </div>
+                        <button class="redeem-btn" disabled>Locked</button>
+                    </div>
+
+                    <!-- CEO Club Access - LOCKED -->
+                    <div class="power-up-card locked">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>👔</span>
+                                    <span>CEO Club Access Pass</span>
+                                </div>
+                                <div class="power-up-description">3 months of exclusive CEO Club access</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>4,500</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>267 users in CEO Club now</span>
+                        </div>
+                        <div class="locked-progress">
+                            <div class="locked-text">Need 2,050 more stars</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 54%;"></div>
+                            </div>
+                            <div class="scarcity">⭐ Premium feature - Highly sought after</div>
+                        </div>
+                        <button class="redeem-btn" disabled>Locked</button>
+                    </div>
+
+                    <!-- Bonus Stocks Insight -->
+                    <div class="power-up-card">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>🎙️</span>
+                                    <span>Bonus Stocks Insight</span>
+                                </div>
+                                <div class="power-up-description">Extra deep-dive podcast on a trending stock</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>500</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>2,103 users redeemed this week</span>
+                        </div>
+                        <button class="redeem-btn">Redeem Now</button>
+                    </div>
+
+                    <!-- Portfolio Performance Report -->
+                    <div class="power-up-card">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>🎯</span>
+                                    <span>Portfolio Performance Report</span>
+                                </div>
+                                <div class="power-up-description">Detailed AI analysis vs S&P 500 with insights</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>750</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>1,567 users redeemed this month</span>
+                        </div>
+                        <button class="redeem-btn">Redeem Now</button>
+                    </div>
+
+                    <!-- $5 Bonus Deposit -->
+                    <div class="power-up-card">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>💰</span>
+                                    <span>$5 Bonus Deposit</span>
+                                </div>
+                                <div class="power-up-description">Real money added to your Webull account (once only)</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>1,500</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>3,204 users claimed their bonus</span>
+                        </div>
+                        <button class="redeem-btn">Redeem Now</button>
+                    </div>
+
+                    <!-- Weekly Budget Booster -->
+                    <div class="power-up-card">
+                        <div class="power-up-header">
+                            <div class="power-up-title-section">
+                                <div class="power-up-title-text">
+                                    <span>💎</span>
+                                    <span>Weekly Budget Booster</span>
+                                </div>
+                                <div class="power-up-description">We add $3 to your next 4 weekly investments ($12 total)</div>
+                            </div>
+                            <div class="power-up-price">
+                                <span>⭐</span>
+                                <span>2,000</span>
+                            </div>
+                        </div>
+                        <div class="social-proof">
+                            <span>👥</span>
+                            <span>756 users activated this month</span>
+                        </div>
+                        <button class="redeem-btn">Redeem Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earn Stars Tab -->
+            <div id="earn-tab" class="tab-content">
+                <!-- Sharing & Growing -->
+                <div class="earn-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <span>🌱</span>
+                            <span>Sharing & Growing</span>
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="earn-list">
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Share Daily Podcast</div>
+                                <div class="earn-item-desc">Share via unique link + landing page visit required</div>
+                                <span class="earn-badge badge-repeatable">Repeatable</span>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 100</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Share Stock Analysis</div>
+                                <div class="earn-item-desc">Web share + view required</div>
+                                <span class="earn-badge badge-repeatable">Repeatable</span>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 200</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item completed">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Follow Benson on TikTok</div>
+                                <div class="earn-item-desc">Trust-based confirmation</div>
+                                <span class="earn-badge badge-one-time">One-time</span>
+                                <div class="completion-info">
+                                    <span class="completion-date">Completed Dec 15, 2025</span>
+                                    <span class="completion-stars">+100 ⭐ earned</span>
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="completed-check">✓</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Write App Store Review</div>
+                                <div class="earn-item-desc">Must be 4+ stars</div>
+                                <span class="earn-badge badge-one-time">One-time</span>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 300</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item milestone">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">3 Friends Subscribe</div>
+                                <div class="earn-item-desc">Bonus for referral milestone</div>
+                                <span class="earn-badge badge-milestone">Milestone</span>
+                                <div class="progress-bar" style="margin-top: 8px;">
+                                    <div class="progress-fill" style="width: 66%;"></div>
+                                </div>
+                                <div class="progress-info">2 of 3 friends subscribed</div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 1,500</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discipline & Investing -->
+                <div class="earn-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <span>💪</span>
+                            <span>Discipline & Investing</span>
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="earn-list">
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Weekly Investment Executed</div>
+                                <div class="earn-item-desc">Complete your weekly investment</div>
+                                <span class="earn-badge badge-repeatable">Weekly</span>
+                                <div class="countdown">
+                                    <span>⏱️</span>
+                                    <span>Resets in 3 days, 14 hours</span>
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 50</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item milestone">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">5-Week Streak</div>
+                                <div class="earn-item-desc">Invest weekly for 5 consecutive weeks</div>
+                                <span class="earn-badge badge-milestone">Milestone</span>
+                                <div class="progress-bar" style="margin-top: 8px;">
+                                    <div class="progress-fill" style="width: 80%;"></div>
+                                </div>
+                                <div class="progress-info">4 of 5 weeks completed</div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 300</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item completed">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Connect Webull Account</div>
+                                <div class="earn-item-desc">Link your brokerage account</div>
+                                <span class="earn-badge badge-one-time">One-time</span>
+                                <div class="completion-info">
+                                    <span class="completion-date">Completed Nov 8, 2025</span>
+                                    <span class="completion-stars">+100 ⭐ earned</span>
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="completed-check">✓</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item completed">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">First Investment Completed</div>
+                                <div class="earn-item-desc">Execute your first investment</div>
+                                <span class="earn-badge badge-one-time">One-time</span>
+                                <div class="completion-info">
+                                    <span class="completion-date">Completed Nov 10, 2025</span>
+                                    <span class="completion-stars">+200 ⭐ earned</span>
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="completed-check">✓</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item milestone">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Total $500 Invested</div>
+                                <div class="earn-item-desc">Reach $500 in total investments</div>
+                                <span class="earn-badge badge-milestone">Milestone</span>
+                                <div class="progress-bar" style="margin-top: 8px;">
+                                    <div class="progress-fill" style="width: 72%;"></div>
+                                </div>
+                                <div class="progress-info">$360 of $500 invested</div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 250</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learn & Engage -->
+                <div class="earn-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <span>📚</span>
+                            <span>Learn & Engage</span>
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="earn-list">
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Daily Podcast Listened</div>
+                                <div class="earn-item-desc">Listen to today's market podcast</div>
+                                <span class="earn-badge badge-repeatable">Daily</span>
+                                <div class="countdown">
+                                    <span>⏱️</span>
+                                    <span>Today's episode available</span>
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 25</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item milestone">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">10 Daily Podcasts Listened</div>
+                                <div class="earn-item-desc">Listen to 10 podcast episodes</div>
+                                <span class="earn-badge badge-milestone">Milestone</span>
+                                <div class="progress-bar" style="margin-top: 8px;">
+                                    <div class="progress-fill" style="width: 70%;"></div>
+                                </div>
+                                <div class="progress-info">7 of 10 episodes listened</div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 100</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Trivia Game Played</div>
+                                <div class="earn-item-desc">Test your investing knowledge</div>
+                                <span class="earn-badge badge-repeatable">Repeatable</span>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 50</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Join CEO Club</div>
+                                <div class="earn-item-desc">Qualify and join the exclusive CEO Club</div>
+                                <span class="earn-badge badge-one-time">One-time</span>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 1,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Contributions -->
+                <div class="earn-category">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <div class="category-title">
+                            <span>🌍</span>
+                            <span>Community Contributions</span>
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="earn-list">
+                        <div class="earn-item community">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">1,000 Users Listen to Today's Podcast</div>
+                                <div class="earn-item-desc">Everyone gets these points when goal is reached</div>
+                                <span class="earn-badge badge-repeatable">Daily Goal</span>
+                                <div class="live-counter">
+                                    <span class="counter-value" id="podcast-counter">847 / 1,000</span> listeners today
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 50</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item community">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">$100,000 Total Investments This Week</div>
+                                <div class="earn-item-desc">Community-wide weekly goal</div>
+                                <span class="earn-badge badge-repeatable">Weekly Goal</span>
+                                <div class="live-counter">
+                                    <span class="counter-value" id="investment-counter">$67,234 / $100,000</span> invested this week
+                                </div>
+                                <div class="countdown">
+                                    <span>⏱️</span>
+                                    <span>Resets in 3 days</span>
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 100</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item community milestone">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">Community Reaches $10M Invested</div>
+                                <div class="earn-item-desc">Major community milestone</div>
+                                <span class="earn-badge badge-milestone">Milestone</span>
+                                <div class="live-counter">
+                                    <span class="counter-value">$8.4M / $10M</span> total community investments
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 500</div>
+                            </div>
+                        </div>
+
+                        <div class="earn-item community">
+                            <div class="earn-item-info">
+                                <div class="earn-item-title">50 New 5-Star Reviews This Month</div>
+                                <div class="earn-item-desc">Help us reach our review goal</div>
+                                <span class="earn-badge badge-repeatable">Monthly Goal</span>
+                                <div class="live-counter">
+                                    <span class="counter-value" id="review-counter">38 / 50</span> reviews this month
+                                </div>
+                            </div>
+                            <div class="earn-reward">
+                                <div class="earn-stars"><span>⭐</span> 100</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buy Stars Tab -->
+            <div id="buy-tab" class="tab-content">
+                <div class="buy-header">
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Purchase Star Points</div>
+                    <div class="unlock-status">
+                        <span>✅</span>
+                        <span>Unlocked: You've earned 500+ stars organically</span>
+                    </div>
+                </div>
+
+                <div class="packages-grid">
+                    <div class="package-card">
+                        <div class="package-top">
+                            <div class="package-name">Starter</div>
+                            <div class="package-price">$4.99</div>
+                        </div>
+                        <div class="package-stars-display">
+                            <div class="package-stars-number">
+                                <span>⭐</span>
+                                <span>500</span>
+                            </div>
+                        </div>
+                        <button class="buy-btn">Purchase</button>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-top">
+                            <div class="package-name">Boost</div>
+                            <div class="package-price">$12.99</div>
+                        </div>
+                        <div class="package-stars-display">
+                            <div class="package-stars-number">
+                                <span>⭐</span>
+                                <span>1,500</span>
+                            </div>
+                        </div>
+                        <button class="buy-btn">Purchase</button>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-top">
+                            <div class="package-name">Accelerator</div>
+                            <div class="package-price">$24.99</div>
+                        </div>
+                        <div class="package-stars-display">
+                            <div class="package-stars-number">
+                                <span>⭐</span>
+                                <span>3,000</span>
+                            </div>
+                        </div>
+                        <button class="buy-btn">Purchase</button>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-top">
+                            <div class="package-name">Power User</div>
+                            <div class="package-price">$44.99</div>
+                        </div>
+                        <div class="package-stars-display">
+                            <div class="package-stars-number">
+                                <span>⭐</span>
+                                <span>6,000</span>
+                            </div>
+                        </div>
+                        <button class="buy-btn">Purchase</button>
+                    </div>
+                </div>
+
+                <div class="buy-policy">
+                    <div class="policy-title">Purchase Policy</div>
+                    <div class="policy-list">
+                        • One-time purchases only - no subscriptions<br>
+                        • No discounts or promotional pricing<br>
+                        • All sales are final<br>
+                        • Stars never expire<br>
+                        • Available after earning 500 organic stars
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-content">
+                <div class="history-filters">
+                    <button class="filter-btn active" onclick="filterHistory('earned')">Earned</button>
+                    <button class="filter-btn" onclick="filterHistory('redeemed')">Redeemed</button>
+                </div>
+
+                <div class="history-timeline">
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">Daily Podcast Listened</div>
+                            <div class="history-amount positive">+25 ⭐</div>
+                        </div>
+                        <div class="history-desc">Completed today's market update podcast</div>
+                        <div class="history-time">Today at 3:24 PM</div>
+                    </div>
+
+                    <div class="history-item redeemed">
+                        <div class="history-top">
+                            <div class="history-title">Buy the Dip Activated</div>
+                            <div class="history-amount negative">-500 ⭐</div>
+                        </div>
+                        <div class="history-desc">Power-up redeemed successfully</div>
+                        <div class="history-time">Today at 10:15 AM</div>
+                    </div>
+
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">Weekly Investment Executed</div>
+                            <div class="history-amount positive">+50 ⭐</div>
+                        </div>
+                        <div class="history-desc">Completed your weekly investment on schedule</div>
+                        <div class="history-time">Yesterday at 9:00 AM</div>
+                    </div>
+
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">Share Daily Podcast</div>
+                            <div class="history-amount positive">+100 ⭐</div>
+                        </div>
+                        <div class="history-desc">Someone visited via your share link</div>
+                        <div class="history-time">2 days ago at 4:32 PM</div>
+                    </div>
+
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">5-Week Streak Milestone</div>
+                            <div class="history-amount positive">+300 ⭐</div>
+                        </div>
+                        <div class="history-desc">Congratulations! 5 consecutive weeks of investing</div>
+                        <div class="history-time">3 days ago at 9:00 AM</div>
+                    </div>
+
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">Community Goal: 1,000 Podcast Listeners</div>
+                            <div class="history-amount positive">+50 ⭐</div>
+                        </div>
+                        <div class="history-desc">Community reached daily podcast goal</div>
+                        <div class="history-time">4 days ago at 8:47 PM</div>
+                    </div>
+
+                    <div class="history-item redeemed">
+                        <div class="history-top">
+                            <div class="history-title">Portfolio Performance Report</div>
+                            <div class="history-amount negative">-750 ⭐</div>
+                        </div>
+                        <div class="history-desc">Detailed AI analysis report generated</div>
+                        <div class="history-time">5 days ago at 2:18 PM</div>
+                    </div>
+
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">Friend Subscribes</div>
+                            <div class="history-amount positive">+800 ⭐</div>
+                        </div>
+                        <div class="history-desc">Sarah M. signed up for monthly subscription</div>
+                        <div class="history-time">6 days ago at 11:23 AM</div>
+                    </div>
+
+                    <div class="history-item earned">
+                        <div class="history-top">
+                            <div class="history-title">Stars Purchased</div>
+                            <div class="history-amount positive">+1,500 ⭐</div>
+                        </div>
+                        <div class="history-desc">Boost package - $12.99</div>
+                        <div class="history-time">1 week ago at 7:32 PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a class="nav-item left active" onclick="showHome()">
+                <div class="nav-icon">🏠</div>
+                <span>Home</span>
+            </a>
+            <a class="nav-item center">
+                <div class="nav-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                    </svg>
+                </div>
+            </a>
+            <a class="nav-item right">
+                <div class="nav-icon">📈</div>
+                <span>Stocks</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification-toast" class="notification-toast">
+        <div class="toast-icon">⭐</div>
+        <div class="toast-content">
+            <div class="toast-title">Points Earned!</div>
+            <div class="toast-message" id="toast-message">Daily Podcast Listened</div>
+        </div>
+        <div class="toast-stars" id="toast-stars">+25</div>
+    </div>
+
+    <!-- Simulation Modal -->
+    <div id="simulation-modal" class="simulation-modal">
+        <div class="simulation-content">
+            <div class="simulation-header">
+                <div class="simulation-title">🎮 Simulate Earning</div>
+                <button class="close-modal-btn" onclick="closeSimulation()">×</button>
+            </div>
+            
+            <div class="simulation-options">
+                <div class="simulation-option" onclick="simulateEarning('Daily Podcast Listened', 25)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">Daily Podcast Listened</div>
+                        <div class="simulation-option-desc">Personal achievement</div>
+                    </div>
+                    <div class="simulation-option-stars">+25 ⭐</div>
+                </div>
+
+                <div class="simulation-option" onclick="simulateEarning('Weekly Investment Executed', 50)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">Weekly Investment Executed</div>
+                        <div class="simulation-option-desc">Personal achievement</div>
+                    </div>
+                    <div class="simulation-option-stars">+50 ⭐</div>
+                </div>
+
+                <div class="simulation-option" onclick="simulateEarning('Share Daily Podcast', 100)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">Share Daily Podcast</div>
+                        <div class="simulation-option-desc">Personal achievement</div>
+                    </div>
+                    <div class="simulation-option-stars">+100 ⭐</div>
+                </div>
+
+                <div class="simulation-option" onclick="simulateEarning('Community: 1,000 Podcast Listeners', 50, true)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">🌍 1,000 Podcast Listeners</div>
+                        <div class="simulation-option-desc">Community goal reached!</div>
+                    </div>
+                    <div class="simulation-option-stars">+50 ⭐</div>
+                </div>
+
+                <div class="simulation-option" onclick="simulateEarning('Community: $100K Weekly Investments', 100, true)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">🌍 $100K Weekly Investments</div>
+                        <div class="simulation-option-desc">Community goal reached!</div>
+                    </div>
+                    <div class="simulation-option-stars">+100 ⭐</div>
+                </div>
+
+                <div class="simulation-option" onclick="simulateEarning('5-Week Streak Milestone', 300)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">5-Week Streak</div>
+                        <div class="simulation-option-desc">Milestone achieved!</div>
+                    </div>
+                    <div class="simulation-option-stars">+300 ⭐</div>
+                </div>
+
+                <div class="simulation-option" onclick="simulateEarning('Friend Subscribes', 800)">
+                    <div class="simulation-option-info">
+                        <div class="simulation-option-title">Friend Subscribes</div>
+                        <div class="simulation-option-desc">Referral bonus</div>
+                    </div>
+                    <div class="simulation-option-stars">+800 ⭐</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation Functions
+        function showHome() {
+            document.getElementById('home-screen').classList.remove('hidden');
+            document.getElementById('stars-screen').classList.add('hidden');
+            updateNavActive(0);
+        }
+
+        function showStarsPage() {
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('stars-screen').classList.remove('hidden');
+            document.getElementById('stars-screen').scrollTop = 0;
+        }
+
+        function updateNavActive(index) {
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+
+        // Stars Page Tab Switching
+        function switchStarsTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Category Toggle
+        function toggleCategory(header) {
+            header.classList.toggle('collapsed');
+            const list = header.nextElementSibling;
+            list.classList.toggle('collapsed');
+        }
+
+        // History Filter
+        function filterHistory(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const items = document.querySelectorAll('.history-item');
+            items.forEach(item => {
+                if (filter === 'earned') {
+                    item.style.display = item.classList.contains('earned') ? 'block' : 'none';
+                } else if (filter === 'redeemed') {
+                    item.style.display = item.classList.contains('redeemed') ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Live Counter Animation
+        function animateCounters() {
+            const podcastCounter = document.getElementById('podcast-counter');
+            const investmentCounter = document.getElementById('investment-counter');
+            const reviewCounter = document.getElementById('review-counter');
+
+            setInterval(() => {
+                // Podcast counter
+                const podcastMatch = podcastCounter.textContent.match(/(\d+) \/ (\d+)/);
+                if (podcastMatch) {
+                    let current = parseInt(podcastMatch[1]);
+                    const max = parseInt(podcastMatch[2]);
+                    if (current < max) {
+                        current += Math.floor(Math.random() * 3) + 1;
+                        current = Math.min(current, max);
+                        podcastCounter.textContent = `${current} / ${max}`;
+                    }
+                }
+
+                // Investment counter
+                const investMatch = investmentCounter.textContent.match(/\$(\d+,\d+) \/ \$(\d+,\d+)/);
+                if (investMatch) {
+                    let current = parseInt(investMatch[1].replace(',', ''));
+                    const max = parseInt(investMatch[2].replace(',', ''));
+                    if (current < max) {
+                        current += Math.floor(Math.random() * 500) + 100;
+                        current = Math.min(current, max);
+                        investmentCounter.textContent = `$${current.toLocaleString()} / $${max.toLocaleString()}`;
+                    }
+                }
+
+                // Review counter
+                const reviewMatch = reviewCounter.textContent.match(/(\d+) \/ (\d+)/);
+                if (reviewMatch) {
+                    let current = parseInt(reviewMatch[1]);
+                    const max = parseInt(reviewMatch[2]);
+                    if (current < max && Math.random() > 0.7) {
+                        current += 1;
+                        reviewCounter.textContent = `${current} / ${max}`;
+                    }
+                }
+            }, 6000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            animateCounters();
+        });
+
+        // Simulation Functions
+        let currentStarCount = 2450;
+
+        function showSimulation() {
+            document.getElementById('simulation-modal').classList.add('show');
+        }
+
+        function closeSimulation() {
+            document.getElementById('simulation-modal').classList.remove('show');
+        }
+
+        function simulateEarning(title, points, isCommunity = false) {
+            // Update star count
+            currentStarCount += points;
+            
+            // Update all star count displays
+            document.querySelectorAll('.star-count-header').forEach(el => {
+                el.textContent = currentStarCount.toLocaleString();
+            });
+            document.querySelectorAll('.star-number').forEach(el => {
+                el.textContent = currentStarCount.toLocaleString();
+            });
+
+            // Show notification toast
+            const toast = document.getElementById('notification-toast');
+            const toastMessage = document.getElementById('toast-message');
+            const toastStars = document.getElementById('toast-stars');
+            
+            toastMessage.textContent = title;
+            toastStars.textContent = `+${points} ⭐`;
+            
+            if (isCommunity) {
+                toast.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)';
+                toast.querySelector('.toast-icon').textContent = '🌍';
+            } else {
+                toast.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                toast.querySelector('.toast-icon').textContent = '⭐';
+            }
+
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+
+            // Close modal
+            closeSimulation();
+
+            // Scroll to top to see notification
+            if (document.getElementById('home-screen').classList.contains('hidden')) {
+                // If on stars page, scroll that
+                document.getElementById('stars-screen').scrollTop = 0;
+            } else {
+                // If on home, scroll that
+                document.getElementById('home-screen').scrollTop = 0;
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('simulation-modal');
+            if (e.target === modal) {
+                closeSimulation();
+            }
+        });
+    </script>
+</body>
+</html>
